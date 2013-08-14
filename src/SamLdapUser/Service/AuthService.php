@@ -154,7 +154,11 @@ class AuthService
 
     public function getIdentity()
     {
-        return $this->getAuthService()->getIdentity();
+        $identity = $this->getAuthService()->getIdentity();
+
+        $this->getEventManager()->trigger(self::EVENT_IDENTITY_GET, $identity);
+
+        return $identity;
     }
 
     /**
