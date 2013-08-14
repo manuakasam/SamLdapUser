@@ -1,0 +1,8 @@
+<h1>Ldap Logins</h1>
+<?php
+$form->setAttribute('action', $this->url())
+    ->prepare();
+
+echo $this->form()->openTag($form);
+echo $this->formCollection($form);
+echo $this->form()->closeTag();
