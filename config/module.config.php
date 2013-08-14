@@ -1,7 +1,6 @@
 <?php
 return array(
     'sam_ldap_user' => array(
-        'mapper_class' => 'SamLdapUser\Mapper\UserMapper',
         'server_config' => array(
             'server1' => array(
                 'host'                 => 'NW18001.stadt-duisburg.de',

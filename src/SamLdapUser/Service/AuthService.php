@@ -10,6 +10,7 @@ use Zend\Authentication\Adapter\Ldap as AuthAdapter;
 use Zend\Authentication\Storage\Session;
 use Zend\Authentication\Storage\StorageInterface;
 use Zend\EventManager\EventManager;
+use Zend\EventManager\ResponseCollection;
 use Zend\Ldap\Exception\LdapException;
 use Zend\Ldap\Ldap;
 
@@ -19,6 +20,7 @@ class AuthService
     const EVENT_LDAP_BIND_EXCEPTION         = 'sam-ldap-user.service.auth-service.bind.exception';
     const EVENT_LDAP_AUTHENTICATION_INVALID = 'sam-ldap-user.service.auth-service.authenticate.invalid';
     const EVENT_LDAP_AUTHENTICATION_VALID   = 'sam-ldap-user.service.auth-service.authenticate.valid';
+    const EVENT_IDENTITY_GET                = 'sam-ldap-user.service-auth-service.identity.get';
 
     /**
      * @var AuthenticationService
@@ -38,9 +40,6 @@ class AuthService
     {
         $this->setServerConfig($serverConfig);
         $this->setStorage($storage);
-        $this->setEventManager(
-            new EventManager(__CLASS__)
-        );
         $this->bind();
     }
 
@@ -55,17 +54,17 @@ class AuthService
         try {
             $ldap = new Ldap($server1);
 
-            $this->eventManager->trigger(self::EVENT_LDAP_BIND, $this, array(
+            $this->getEventManager()->trigger(self::EVENT_LDAP_BIND, $this, array(
                 'server_config' => $this->getServerConfig()
             ));
 
             $ldap->bind();
 
-            $this->eventManager->trigger(self::EVENT_LDAP_BIND . '.post', $this, array(
+            $this->getEventManager()->trigger(self::EVENT_LDAP_BIND . '.post', $this, array(
                 'server_config' => $this->getServerConfig()
             ));
         } catch (LdapException $e) {
-            $this->eventManager->trigger(self::EVENT_LDAP_BIND_EXCEPTION, $this, array(
+            $this->getEventManager()->trigger(self::EVENT_LDAP_BIND_EXCEPTION, $this, array(
                 'server_config' => $this->getServerConfig(),
                 'exception'     => $e
             ));
@@ -118,7 +117,7 @@ class AuthService
             $result = $this->getAuthService()->authenticate($adapter);
 
             if (!$result->isValid()) {
-                $this->eventManager->trigger(self::EVENT_LDAP_AUTHENTICATION_INVALID, $this, array(
+                $this->getEventManager()->trigger(self::EVENT_LDAP_AUTHENTICATION_INVALID, $this, array(
                     'server_config' => $this->getServerConfig(),
                     'ldap_result'   => $result
                 ));
@@ -126,14 +125,14 @@ class AuthService
                 return false;
             }
 
-            $this->eventManager->trigger(self::EVENT_LDAP_AUTHENTICATION_VALID, $this, array(
+            $this->getEventManager()->trigger(self::EVENT_LDAP_AUTHENTICATION_VALID, $this, array(
                 'server_config' => $this->getServerConfig(),
                 'ldap_result'   => $result
             ));
 
             return true;
         } catch (LdapException $e) {
-            $this->eventManager->trigger(self::EVENT_LDAP_AUTHENTICATION_EXCEPTION, $this, array(
+            $this->getEventManager()->trigger(self::EVENT_LDAP_AUTHENTICATION_EXCEPTION, $this, array(
                 'server_config' => $this->getServerConfig(),
                 'exception'     => $e
             ));
@@ -156,7 +155,10 @@ class AuthService
     {
         $identity = $this->getAuthService()->getIdentity();
 
-        $this->getEventManager()->trigger(self::EVENT_IDENTITY_GET, $identity);
+        $trigger = $this->getEventManager()->trigger(self::EVENT_IDENTITY_GET, $identity);
+        if ($trigger instanceof ResponseCollection) {
+            return $trigger->last();
+        }
 
         return $identity;
     }
@@ -177,6 +179,11 @@ class AuthService
      */
     public function getEventManager()
     {
+        if (!$this->eventManager) {
+            $this->setEventManager(
+                new EventManager(__CLASS__)
+            );
+        }
         return $this->eventManager;
     }
 

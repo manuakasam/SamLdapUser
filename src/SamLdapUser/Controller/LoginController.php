@@ -43,7 +43,6 @@ class LoginController extends AbstractActionController
             return $this->redirect()->toRoute('user/login');
         }
 
-        var_dump($authService->getIdentity());
-        die("YATTA!");
+        return $this->redirect()->toRoute('user');
     }
 }
