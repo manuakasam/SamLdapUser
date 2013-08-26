@@ -1,6 +1,6 @@
 <?php
 return array(
-    'sam_ldap_user' => array(
+    'sam_ldap_user'   => array(
         'server_config' => array(
             'server1' => array(
                 'host'                 => 'NW18001.stadt-duisburg.de',
@@ -23,14 +23,14 @@ return array(
     ),
     'service_manager' => array(
         'factories' => array(
-            'SamLdapUser\Config'              => 'SamLdapUser\Config\ConfigFactory',
-            'SamLdapUser\ServerConfig'        => 'SamLdapUser\Config\ServerConfigFactory',
-            'SamLdapUser\Service\AuthService' => 'SamLdapUser\Service\AuthServiceFactory',
-            'SamLdapUser\Form\LoginForm'      => 'SamLdapUser\Form\LoginFormFactory',
+            'SamLdapUser\Config'                 => 'SamLdapUser\Config\ConfigFactory',
+            'SamLdapUser\ServerConfig'           => 'SamLdapUser\Config\ServerConfigFactory',
+            'SamLdapUser\Service\AuthService'    => 'SamLdapUser\Service\AuthServiceFactory',
+            'SamLdapUser\Form\LoginForm'         => 'SamLdapUser\Form\LoginFormFactory',
             'SamLdapUser\Authentication\Storage' => 'SamLdapUser\Authentication\StorageFactory'
         )
     ),
-    'view_manager' => array(
+    'view_manager'    => array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
