@@ -3,7 +3,7 @@ return array(
     'sam_ldap_user'   => array(
         'server_config' => array(
             'server1' => array(
-                'host'                 => 'NW18001.stadt-duisburg.de',
+                'host'                 => 'ldap.host.dom',
                 'port'                 => 636,
                 'useSsl'               => true,
                 'useStartTls'          => false,
