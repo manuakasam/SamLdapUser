@@ -11,11 +11,9 @@ class LogoutController extends AbstractActionController
 
         if (!$service->hasIdentity())
         {
-            return $this->redirect()->toRoute('user/login');
+            $service->clearIdentity();
         }
-
-        $service->clearIdentity();
-
+        
         return $this->redirect()->toRoute('user/login');
     }
 }
