@@ -9,13 +9,11 @@ class LogoutController extends AbstractActionController
     {
         $service = $this->getServiceLocator()->get('SamLdapUser\Service\AuthService');
 
-        if (!$service->hasIdentity())
+        if ($service->hasIdentity())
         {
-            return $this->redirect()->toRoute('user/login');
+            $service->clearIdentity();
         }
-
-        $service->clearIdentity();
-
+        
         return $this->redirect()->toRoute('user/login');
     }
 }
